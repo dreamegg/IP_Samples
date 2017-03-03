@@ -153,6 +153,8 @@
     <ClCompile Include="cam_control.cpp" />
     <ClCompile Include="ImageLoad.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Sobel.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="opencv_ffmpeg320_64.dll" />
@@ -163,6 +165,8 @@
     <ClInclude Include="cam_control.h" />
     <ClInclude Include="ImageLoad.h" />
     <ClInclude Include="opencv_base.h" />
+    <ClInclude Include="Sobel.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Lenna.png" />

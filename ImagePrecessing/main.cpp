@@ -3,6 +3,7 @@ using namespace std;
 
 #include "cam_control.h"
 #include "ImageLoad.h"
+#include "Sobel.h"
 
 int main(int, char**)
 {
@@ -12,25 +13,27 @@ int main(int, char**)
 	cout << "[0] Exit" << endl;
 	cout << "[1] Web Cam Test" << endl;
 	cout << "[2] Image Load " << endl;
+	cout << "[3] Sobel " << endl;
+	cout << "Input =>";
 	cin >> chIputCase;
 	cout << "----------------" << endl;
 	
-	if (chIputCase == '0')
-	{
+	if (chIputCase == '0'){
 		waitKey();
 		return 0;
 	}
-
-	else if (chIputCase == '1')
-	{
+	else if (chIputCase == '1'){
 		cam_control cCam;
 		cCam.do_cam();
 	}
 
-	else if (chIputCase == '2')
-	{
+	else if (chIputCase == '2'){
 		ImageLoad cImage;
 		cImage.do_load();
+	}
+	else if (chIputCase == '3') {
+		Sobel_byMe cSobel;
+		cSobel.do_proc();
 	}
 
 	return 0;
