@@ -30,26 +30,25 @@ int Sobel_byMe::do_proc()
 
 	imshow("Display_Gray", mGray);
 
-	int src[3][3];
-	int out[3][3];
+	int out_sum;
 	for (int j = 1; j < mGray.rows - 1; j++)
 	{
 		for (int i = 1; i < mGray.cols - 1; i++)
 		{
-			src[0][0] = mGray.at<uchar>(j - 1, i-1);
-			src[0][1] = mGray.at<uchar>(j - 1, i);
-			src[0][2] = mGray.at<uchar>(j - 1, i + 1);
-			src[1][0] = mGray.at<uchar>(j, i-1);
-			src[1][1] = mGray.at<uchar>(j, i);
-			src[1][2] = mGray.at<uchar>(j, i + 1-1);
-			src[2][0] = mGray.at<uchar>(j + 1, i);
-			src[2][1] = mGray.at<uchar>(j + 1, i);
-			src[2][1] = mGray.at<uchar>(j + 1, i + 1);
+			out_sum = 0;
+			for (int mj = 0; mj < 3; mj++)
+			{
+				for (int mi = 0; mi < 3; mi++)
+				{
+					out_sum = out_sum + (mSobelMatrix_x[mj][mi]) * mGray.at<uchar>(j - 1 + mj, i - 1 + mi);
+				}
+			}
+			out_sum = out_sum / 20;
+			mOut.at<uchar>(j, i) = 255; // out_sum;
+			
 		}
 	}
-
-	utils cUtils;
-	//cUtils.MuxMatrix(src, mSobelMatrix_x, out, 3);
+	imshow("Display_Sobel", mOut);
 
 	waitKey();
 	return 1;
