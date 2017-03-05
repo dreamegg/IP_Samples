@@ -44,7 +44,7 @@ int Sobel_byMe::do_proc()
 				}
 			}
 			out_sum = out_sum / 20;
-			mOut.at<uchar>(j, i) = 255; // out_sum;
+			//mOut.at<uchar>(j, i) = 255; // out_sum;
 			
 		}
 	}
