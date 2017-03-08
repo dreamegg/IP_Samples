@@ -2,26 +2,55 @@
 #include <iostream>
 #include "utils.h"
 
-void onMouse(int event, int x, int y, int, void* params)
+void onMouse(int event, int x, int y, int flag, void* params)
 {
-	if (event == CV_EVENT_LBUTTONDOWN )
+	Mat *img = (Mat *)params;
+	char out_text[256];
+	Mat TextWindow;
+	TextWindow.create(vector<int>(400,300), CV_LOAD_IMAGE_COLOR);
+		
+	TextWindow =	Mat::zeros(400, 300, CV_8U);
+
+	if (event == CV_EVENT_LBUTTONDOWN)
 	{
 		cout << "Mouse Pos X|Y =" << x << "|" << y << endl;
+		namedWindow("Text", WINDOW_NORMAL);
 
-		Mat *img = (Mat *)params;
-
-		Mat TextWindow = Mat::zeros(250, 250, CV_8U);
-		char out_text[256] = { 0, };
-
-		for (int j = 0; j < 10; j++)
+		for (int j = -10; j < 10; j++)
 		{
 			memset(out_text, 0, 256);
-			for (int i = 0; i < 10; i++)
+			for (int i = -10; i < 10; i++)
 			{
-				sprintf(out_text, ("%3d "), img->at<uchar>(x+j, y+i));
+				char value_text[256] = { 0. };
+				if (((x + j) > 0 && (x + j) < img->rows) && ((y + i) > 0 && (y + i) < img->cols))
+					sprintf(value_text, ("%5d"), img->at<uchar>(x + j, y + i));
+				else
+					sprintf(value_text, ("---- "));
+
+				strcat(out_text, value_text);
 			}
-			sprintf(out_text, ("\n"));
-			putText(TextWindow, out_text, Point(50+j*10, 30), CV_FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255), 1, 8, false);
+			putText(TextWindow, out_text, Point(0, 130 + j * 10), CV_FONT_HERSHEY_SIMPLEX, 0.3, Scalar(255), 1, 8, false);
+		}
+		imshow("Text", TextWindow);
+	}
+	if (event == CV_EVENT_MOUSEMOVE && flag == EVENT_FLAG_LBUTTON)
+	{
+		TextWindow = Mat::zeros(250, 250, CV_8U);
+		cout << "Mouse Pos X|Y =" << x << "|" << y << endl;
+		for (int j = -10; j < 10; j++)
+		{
+			memset(out_text, 0, 256);
+			for (int i = -10; i < 10; i++)
+			{
+				char value_text[256] = { 0. };
+				if (((x + j) > 0 && (x + j) < img->rows) && ((y + i) > 0 && (y + i) < img->cols))
+					sprintf(value_text, ("%5d"), img->at<uchar>(x + j, y + i));
+				else
+					sprintf(value_text, ("---- "));
+
+				strcat(out_text, value_text);
+			}
+			putText(TextWindow, out_text, Point(0, 130 + j * 10), CV_FONT_HERSHEY_SIMPLEX, 0.3, Scalar(255), 1, 8, false);
 		}
 
 		imshow("Text", TextWindow);
@@ -190,7 +219,7 @@ int Filter_action::do_proc()
 	image_Normalize(Direction_Map);
 	imshow("Direction_Map", Direction_Map);
 
-	setMouseCallback("Direction_Map", onMouse, (void*) &mImage);
+	setMouseCallback("Direction_Map", onMouse, (void*) &Direction_Map);
 	
 	waitKey();
 	
