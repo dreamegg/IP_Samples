@@ -7,35 +7,10 @@ void onMouse(int event, int x, int y, int flag, void* params)
 	Mat *img = (Mat *)params;
 	char out_text[256];
 	Mat TextWindow;
-	TextWindow.create(vector<int>(400,300), CV_LOAD_IMAGE_COLOR);
 		
-	TextWindow =	Mat::zeros(400, 300, CV_8U);
-
-	if (event == CV_EVENT_LBUTTONDOWN)
+	if (event == CV_EVENT_LBUTTONDOWN || (event == CV_EVENT_MOUSEMOVE && flag == EVENT_FLAG_LBUTTON))
 	{
-		cout << "Mouse Pos X|Y =" << x << "|" << y << endl;
-		namedWindow("Text", WINDOW_NORMAL);
-
-		for (int j = -10; j < 10; j++)
-		{
-			memset(out_text, 0, 256);
-			for (int i = -10; i < 10; i++)
-			{
-				char value_text[256] = { 0. };
-				if (((x + j) > 0 && (x + j) < img->rows) && ((y + i) > 0 && (y + i) < img->cols))
-					sprintf(value_text, ("%5d"), img->at<uchar>(x + j, y + i));
-				else
-					sprintf(value_text, ("---- "));
-
-				strcat(out_text, value_text);
-			}
-			putText(TextWindow, out_text, Point(0, 130 + j * 10), CV_FONT_HERSHEY_SIMPLEX, 0.3, Scalar(255), 1, 8, false);
-		}
-		imshow("Text", TextWindow);
-	}
-	if (event == CV_EVENT_MOUSEMOVE && flag == EVENT_FLAG_LBUTTON)
-	{
-		TextWindow = Mat::zeros(250, 250, CV_8U);
+		TextWindow = Mat::zeros(250, 640, CV_8U);
 		cout << "Mouse Pos X|Y =" << x << "|" << y << endl;
 		for (int j = -10; j < 10; j++)
 		{
@@ -43,14 +18,19 @@ void onMouse(int event, int x, int y, int flag, void* params)
 			for (int i = -10; i < 10; i++)
 			{
 				char value_text[256] = { 0. };
-				if (((x + j) > 0 && (x + j) < img->rows) && ((y + i) > 0 && (y + i) < img->cols))
+				if ((x + j) > 0 && (x + j) < img->rows)
+					sprintf(value_text, ("%5d"), img->at<uchar>(x + j, y + i));
+				else
+					sprintf(value_text, ("---- "));
+
+				if ((y + i) > 0 && (y + i) < img->cols)
 					sprintf(value_text, ("%5d"), img->at<uchar>(x + j, y + i));
 				else
 					sprintf(value_text, ("---- "));
 
 				strcat(out_text, value_text);
 			}
-			putText(TextWindow, out_text, Point(0, 130 + j * 10), CV_FONT_HERSHEY_SIMPLEX, 0.3, Scalar(255), 1, 8, false);
+			putText(TextWindow, out_text, Point(0, 120 + j * 10), CV_FONT_HERSHEY_SIMPLEX, 0.3, Scalar(255), 1, 8, false);
 		}
 
 		imshow("Text", TextWindow);
