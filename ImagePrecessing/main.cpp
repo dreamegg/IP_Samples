@@ -32,9 +32,8 @@ int main(int, char**)
 		cImage.do_load();
 	}
 	else if (chIputCase == '3') {
-		Sobel_byMe cSobel;
+		Filter_action cSobel;
 		cSobel.do_proc();
 	}
-
 	return 0;
 }
