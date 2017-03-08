@@ -9,6 +9,7 @@ public:
 	Filter_action();
 	~Filter_action();
 
+	int image_Normalize(Mat& src);
 	int conv_filter(Mat& src, Mat& out, float* filter, int filter_size = FILTER_SIZE);
 	int do_proc();
 

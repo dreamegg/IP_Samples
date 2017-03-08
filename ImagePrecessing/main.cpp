@@ -13,7 +13,7 @@ int main(int, char**)
 	cout << "[0] Exit" << endl;
 	cout << "[1] Web Cam Test" << endl;
 	cout << "[2] Image Load " << endl;
-	cout << "[3] Sobel " << endl;
+	cout << "[3] Filter " << endl;
 	cout << "Input =>";
 	cin >> chIputCase;
 	cout << "----------------" << endl;
