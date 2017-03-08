@@ -1,6 +1,36 @@
 #include "Sobel.h"
-
+#include <iostream>
 #include "utils.h"
+
+void onMouse(int event, int x, int y, int, void* params)
+{
+	if (event == CV_EVENT_LBUTTONDOWN )
+	{
+		cout << "Mouse Pos X|Y =" << x << "|" << y << endl;
+
+		Mat *img = (Mat *)params;
+
+		Mat TextWindow = Mat::zeros(250, 250, CV_8U);
+		char out_text[256] = { 0, };
+
+		for (int j = 0; j < 10; j++)
+		{
+			memset(out_text, 0, 256);
+			for (int i = 0; i < 10; i++)
+			{
+				sprintf(out_text, ("%3d "), img->at<uchar>(x+j, y+i));
+			}
+			sprintf(out_text, ("\n"));
+			putText(TextWindow, out_text, Point(50+j*10, 30), CV_FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255), 1, 8, false);
+		}
+
+		imshow("Text", TextWindow);
+	}
+	if (event == CV_EVENT_LBUTTONUP)
+	{
+		destroyWindow("Text");
+	}
+}
 
 Filter_action::Filter_action()
 {
@@ -82,7 +112,6 @@ int createIntense_Map(Mat& src1, Mat& src2, Mat& out)
 		for (int i = 0; i < src1.cols; i++)
 		{
 			out_sum = sqrt(src1.at<uchar>(j, i) ^ 2 + src2.at<uchar>(j, i)^2);
-			if (out_sum > 255)	out_sum = 255;
 			out.at<uchar>(j, i) = out_sum;
 		}
 	}
@@ -113,7 +142,7 @@ int Filter_action::do_proc()
 	Mat mGray;
 
 
-	mImage = imread("lenna.png", CV_LOAD_IMAGE_COLOR);
+	mImage = imread("sample3.jpg", CV_LOAD_IMAGE_COLOR);
 
 	if (!mImage.data)
 	{
@@ -126,9 +155,16 @@ int Filter_action::do_proc()
 	Mat mBulrOut;
 	mBulrOut.create(mGray.size(), mGray.type());
 	conv_filter(mGray, mBulrOut, mGaussian5,5);
-	imshow("Display_Gray", mBulrOut);
-	image_Normalize(mBulrOut);
 	imshow("image_Normalize", mBulrOut);
+
+	/*
+	Mat mSOut_y;
+	mSOut_y.create(mBulrOut.size(), mBulrOut.type());
+	Sobel(mBulrOut, mSOut_y, CV_32F, 0, 1, 3); 
+	imshow("mSOut_x", mSOut_y);
+	Sobel(mBulrOut, mSOut_y, CV_32F, 1, 0, 3);
+	imshow("mSOut_y", mSOut_y);
+	*/
 
 	Mat mOut_x;
 	mOut_x.create(mBulrOut.size(), mBulrOut.type());
@@ -153,14 +189,9 @@ int Filter_action::do_proc()
 	createDirection_Map(mOut_x, mOut_y, Direction_Map);
 	image_Normalize(Direction_Map);
 	imshow("Direction_Map", Direction_Map);
+
+	setMouseCallback("Direction_Map", onMouse, (void*) &mImage);
 	
-	/*Mat mSOut_y;
-	mSOut_y.create(mBulrOut.size(), mBulrOut.type());
-	Sobel(mBulrOut, mSOut_y, CV_32F, 0, 1, 3); 
-	imshow("mSOut_x", mSOut_y);
-	Sobel(mBulrOut, mSOut_y, CV_32F, 1, 0, 3);
-	imshow("mSOut_y", mSOut_y);
-	*/
 	waitKey();
 	
 	return 1;
