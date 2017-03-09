@@ -18,13 +18,8 @@ void onMouse(int event, int x, int y, int flag, void* params)
 			for (int i = -10; i < 10; i++)
 			{
 				char value_text[256] = { 0. };
-				if ((x + j) > 0 && (x + j) < img->rows)
-					sprintf(value_text, ("%5d"), img->at<uchar>(x + j, y + i));
-				else
-					sprintf(value_text, ("---- "));
-
-				if ((y + i) > 0 && (y + i) < img->cols)
-					sprintf(value_text, ("%5d"), img->at<uchar>(x + j, y + i));
+				if (((x + j) > 0 && (x + j) < img->cols) && ((y + i) > 0 && (y + i) < img->rows))
+					sprintf(value_text, ("%5d"), img->at<uchar>(y + i, x + j));
 				else
 					sprintf(value_text, ("---- "));
 
@@ -32,7 +27,6 @@ void onMouse(int event, int x, int y, int flag, void* params)
 			}
 			putText(TextWindow, out_text, Point(0, 120 + j * 10), CV_FONT_HERSHEY_SIMPLEX, 0.3, Scalar(255), 1, 8, false);
 		}
-
 		imshow("Text", TextWindow);
 	}
 	if (event == CV_EVENT_LBUTTONUP)
