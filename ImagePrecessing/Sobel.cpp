@@ -18,10 +18,10 @@ void onMouse(int event, int x, int y, int flag, void* params)
 			for (int i = -10; i < 10; i++)
 			{
 				char value_text[256] = { 0. };
-				if (((x + j) > 0 && (x + j) < img->cols) && ((y + i) > 0 && (y + i) < img->rows))
-					sprintf(value_text, ("%5d"), img->at<uchar>(y + i, x + j));
+				if (((x + i) > 0 && (x + i)< img->cols) && ((y + j) > 0 && (y + j) < img->rows))
+					sprintf(value_text, ("%4d"), img->at<uchar>(y + j, x + i));
 				else
-					sprintf(value_text, ("---- "));
+					sprintf(value_text, ("----"));
 
 				strcat(out_text, value_text);
 			}
@@ -62,7 +62,7 @@ int Filter_action::image_Normalize(Mat& src)
 	{
 		for (int i = 0; i < src.cols; i++)
 		{
-			src.at<uchar>(j, i) = (src.at<uchar>(j, i) - Min) *(256 / (Max - Min) );
+			src.at<uchar>(j, i) = ((src.at<uchar>(j, i) - Min) *(256 / (Max - Min) )/10) *10;
 		}
 	}
 	return 0;
@@ -124,10 +124,8 @@ int createIntense_Map(Mat& src1, Mat& src2, Mat& out)
 int createDirection_Map(Mat& src1, Mat& src2, Mat& out)
 {
 	int out_sum = 0;
-	for (int j = 0; j < src1.rows; j++)
-	{
-		for (int i = 0; i < src1.cols; i++)
-		{
+	for (int j = 0; j < src1.rows; j++)	{
+		for (int i = 0; i < src1.cols; i++)		{
 			double direction = 0;
 			if (src2.at<uchar>(j, i) != 0)		direction = src1.at<uchar>(j, i)/ src2.at<uchar>(j, i);
 			out_sum = (int)(atan(direction) * 90.0 / 3.14) / 8;
@@ -147,9 +145,8 @@ int Filter_action::do_proc()
 
 	mImage = imread("sample3.jpg", CV_LOAD_IMAGE_COLOR);
 
-	if (!mImage.data)
-	{
-		//cout "Error to load Image" >> endl;
+	if (!mImage.data){
+		cout << "Error to load Image"  << endl;
 		return -1;
 	}
 	cvtColor(mImage, mGray, CV_RGBA2GRAY);
@@ -158,6 +155,7 @@ int Filter_action::do_proc()
 	Mat mBulrOut;
 	mBulrOut.create(mGray.size(), mGray.type());
 	conv_filter(mGray, mBulrOut, mGaussian5,5);
+	image_Normalize(mBulrOut);
 	imshow("image_Normalize", mBulrOut);
 
 	/*
@@ -173,13 +171,13 @@ int Filter_action::do_proc()
 	mOut_x.create(mBulrOut.size(), mBulrOut.type());
 	conv_filter(mBulrOut, mOut_x, mSobelMatrix_x);
 	image_Normalize(mOut_x);
-	imshow("Display_Sobelx", mOut_x);
+	//imshow("Display_Sobelx", mOut_x);
 
 	Mat mOut_y;
 	mOut_y.create(mBulrOut.size(), mBulrOut.type());
 	conv_filter(mBulrOut, mOut_y, mSobelMatrix_y);
 	image_Normalize(mOut_y);
-	imshow("Display_Sobely", mOut_y);
+	//imshow("Display_Sobely", mOut_y);
 
 	Mat Intense_Map;
 	Intense_Map.create(mBulrOut.size(), mBulrOut.type());
