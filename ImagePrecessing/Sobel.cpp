@@ -137,6 +137,32 @@ int createDirection_Map(Mat& src1, Mat& src2, Mat& out)
 	return 0;
 }
 
+
+int DoMoravec(Mat& src1, Mat& out, int mask_size)
+{
+	int out_sum = 0;
+	int ring_offset = mask_size / 2;
+
+	for (int j = ring_offset; j < src1.rows - ring_offset - 1; j++)
+	{
+		for (int i = ring_offset; i < src1.cols - ring_offset - 1; i++)
+		{
+			int result_max = 0;
+			for (int maskj = -ring_offset; maskj < ring_offset;  maskj++) {
+				for (int maski = -ring_offset; maski < ring_offset; maski++) {
+					int out_sum = (src1.at<uchar>(j + maskj, i + maski) - src1.at<uchar>(j, i)) ^ 2;
+
+					if (result_max < out_sum)
+						result_max = out_sum;
+					out.at<uchar>(j, i) = result_max;
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+
 int Filter_action::do_proc()
 {
 	Mat mImage;
@@ -192,6 +218,13 @@ int Filter_action::do_proc()
 	imshow("Direction_Map", Direction_Map);
 
 	setMouseCallback("Direction_Map", onMouse, (void*) &Direction_Map);
+
+	Mat Moravec;
+	Moravec.create(mBulrOut.size(), mBulrOut.type());
+	DoMoravec(mBulrOut, Moravec, 5);
+	image_Normalize(Moravec);
+	imshow("Moravec", Moravec);
+	setMouseCallback("Moravec", onMouse, (void*)&Moravec);
 	
 	waitKey();
 	
