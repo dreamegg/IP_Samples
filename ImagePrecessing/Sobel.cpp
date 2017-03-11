@@ -162,6 +162,74 @@ int DoMoravec(Mat& src1, Mat& out, int mask_size)
 	return 0;
 }
 
+int DoHarison(Mat& src1, Mat& out, int mask_size)
+{
+	int out_sum = 0;
+	int ring_offset = mask_size / 2;
+
+	Mat Dx, Dy, Dy2, Dx2, DyDx;
+
+	Dx.create(src1.size(), src1.type());
+	Dy.create(src1.size(), src1.type());
+	Dy2.create(src1.size(), src1.type());
+	Dx2.create(src1.size(), src1.type());
+	DyDx.create(src1.size(), src1.type());
+
+	for (int j = ring_offset; j < src1.rows - ring_offset - 1; j++){
+		for (int i = ring_offset; i < src1.cols - ring_offset - 1; i++){
+			out_sum = 0;
+			out_sum = (src1.at<uchar>(j, i + 1) - (src1.at<uchar>(j, i-1)));
+			Dx.at<uchar>(j, i) = out_sum;
+		}
+	}
+
+	for (int i = ring_offset; i < src1.cols - ring_offset - 1; i++) {
+		for (int j = ring_offset; j < src1.rows - ring_offset - 1; j++){
+			out_sum = 0;
+			out_sum = (src1.at<uchar>(j+1, i) - (src1.at<uchar>(j-1, i)));
+			Dy.at<uchar>(j, i) = out_sum;
+		}
+	}
+
+	for (int j = ring_offset; j < src1.rows - ring_offset - 1; j++) {
+		for (int i = ring_offset; i < src1.cols - ring_offset - 1; i++) {
+			out_sum = 0;
+			out_sum = (Dx.at<uchar>(j, i + 1) - (Dx.at<uchar>(j, i - 1)));
+			Dx2.at<uchar>(j, i) = out_sum;
+		}
+	}
+
+	for (int i = ring_offset; i < src1.cols - ring_offset - 1; i++) {
+		for (int j = ring_offset; j < src1.rows - ring_offset - 1; j++) {
+			out_sum = 0;
+			out_sum = (Dy.at<uchar>(j + 1, i) - (Dy.at<uchar>(j - 1, i)));
+			Dy2.at<uchar>(j, i) = out_sum;
+		}
+	}
+
+	for (int i = ring_offset; i < src1.cols - ring_offset - 1; i++) {
+		for (int j = ring_offset; j < src1.rows - ring_offset - 1; j++) {
+			out_sum = 0;
+			out_sum = (Dx.at<uchar>(j + 1, i) - (Dx.at<uchar>(j - 1, i)));
+			DyDx.at<uchar>(j, i) = out_sum;
+		}
+	}
+
+	imshow("Dx", Dx);
+	imshow("Dy", Dy);
+	imshow("DyDx", DyDx);
+
+	Mat Dx, Dy, Dy2, Dx2, DyDx;
+
+	Dx.create(src1.size(), src1.type());
+	Dy.create(src1.size(), src1.type());
+	Dy2.create(src1.size(), src1.type());
+
+	return 0;
+
+}
+
+
 
 int Filter_action::do_proc()
 {
@@ -169,7 +237,8 @@ int Filter_action::do_proc()
 	Mat mGray;
 
 
-	mImage = imread("sample3.jpg", CV_LOAD_IMAGE_COLOR);
+	//mImage = imread("sample3.jpg", CV_LOAD_IMAGE_COLOR);
+	mImage = imread("lenna.png", CV_LOAD_IMAGE_COLOR);
 
 	if (!mImage.data){
 		cout << "Error to load Image"  << endl;
@@ -224,7 +293,13 @@ int Filter_action::do_proc()
 	DoMoravec(mBulrOut, Moravec, 5);
 	image_Normalize(Moravec);
 	imshow("Moravec", Moravec);
-	setMouseCallback("Moravec", onMouse, (void*)&Moravec);
+
+	Mat Harison;
+	Harison.create(mBulrOut.size(), mBulrOut.type());
+	DoHarison(mBulrOut, Harison, 3);
+	image_Normalize(Harison);
+	imshow("Harison", Harison);
+	setMouseCallback("Harison", onMouse, (void*)&Harison);
 	
 	waitKey();
 	
